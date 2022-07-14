@@ -1,16 +1,25 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
+import {useRouter} from 'next/router'
 
-import Nav from '../components/nav'
+import Nav from './nav'
 
 import styles from '../styles/Home.module.css'
+import pages, {Pages} from '../pages/page-list'
 
-const Home: NextPage = () => {
+type Props = {
+  children: React.ReactNode
+}
+
+const Layout: React.FC<Props> = ({ children }) => {
+  const router = useRouter()
+  const { page } = router.query
+  const { title } = pages[page as Pages]
+
   return (
     <div className={styles.container}>
       <Head>
-        <title>The Last American Road Trip</title>
+        <title>The Last American Road Trip{title === Pages.Cover ? '' : ` - ${title}`}</title>
         <meta name="description" content="An exploration of the post-collapse United States" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,15 +29,15 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          The Last American Road Trip
+          {title === Pages.Cover ? 'The Last American Road Trip' : title}
         </h1>
 
-        <Image src="/parking-lot.png" alt="A Parking lot" width={1920} height={1080} />
+        {children}
 
-        <Nav current='cover' />
+        <Nav />
       </main>
     </div>
   )
 }
 
-export default Home
+export default Layout
